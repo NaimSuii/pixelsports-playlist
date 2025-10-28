@@ -20,9 +20,15 @@ jobs:
           
       - name: Run Pixelsports script
         run: |
-          echo "Starting script..."
-          python pixelsports.py || echo "Script failed with exit code $?"
-          echo "Script finished"
+          echo "=== Starting Python script ==="
+          python -u pixelsports.py 2>&1
+          echo "=== Script exit code: $? ==="
+          echo ""
+          echo "=== Files after script execution ==="
+          ls -la
+          echo ""
+          echo "=== Looking for any m3u8 files ==="
+          find . -name "*.m3u8" 2>/dev/null || echo "No m3u8 files found"
           
       - name: List files to verify output
         run: |
