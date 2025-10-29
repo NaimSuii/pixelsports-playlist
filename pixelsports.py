@@ -1,6 +1,11 @@
 import json
-import requests
+import urllib.request
+import ssl
+from urllib.error import URLError, HTTPError
 from datetime import datetime, timezone, timedelta
+
+# Disable SSL certificate verification globally
+ssl._create_default_https_context = ssl._create_unverified_context
 
 BASE = "https://pixelsport.tv"
 API_EVENTS = f"{BASE}/backend/liveTV/events"
@@ -62,17 +67,14 @@ def fetch_json(url):
     headers = {
         "User-Agent": VLC_USER_AGENT,
         "Referer": VLC_REFERER,
-        "Accept": "application/json",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Origin": BASE,
+        "Accept": "*/*",
+        "Accept-Encoding": "identity",
+        "Connection": "close",
+        "Icy-MetaData": VLC_ICY,
     }
-    try:
-        response = requests.get(url, headers=headers, timeout=15, verify=False)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"[!] Error fetching data: {e}")
-        raise
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        return json.loads(resp.read().decode("utf-8"))
 
 def collect_links_with_labels(event):
     """Collect valid stream URLs with home/away labels from an event."""
