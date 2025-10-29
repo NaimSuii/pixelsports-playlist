@@ -17,49 +17,18 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
-      - name: Install dependencies
-        run: |
-          pip install requests
           
       - name: Run Pixelsports script
-        run: |
-          echo "=== Starting Python script ==="
-          python -u pixelsports.py 2>&1
-          echo "=== Script exit code: $? ==="
-          echo ""
-          echo "=== Files after script execution ==="
-          ls -la
-          echo ""
-          echo "=== Looking for any m3u8 files ==="
-          find . -name "*.m3u8" 2>/dev/null || echo "No m3u8 files found"
-          
-      - name: List files to verify output
-        run: |
-          echo "Files in current directory:"
-          ls -la
-          echo "Looking for m3u8 files:"
-          find . -name "*.m3u8"
-          
+        run: python pixelsports.py
+        
       - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          
-          if [ -f "Pixelsports.m3u8" ]; then
-            echo "File found, adding to git"
-            git add Pixelsports.m3u8 -f
-            git status
-            
-            if git diff --staged --quiet; then
-              echo "No changes to commit"
-            else
-              git commit -m "Update playlist - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-              git push
-              echo "Changes pushed successfully"
-            fi
+          git add -A
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto-update Pixelsports playlist ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+            git push
           else
-            echo "Pixelsports.m3u8 not found!"
-            ls -la
-            exit 1
+            echo "No changes to commit"
           fi
