@@ -13,6 +13,7 @@ OUTPUT_FILE = "Pixelsports.m3u8"
 
 VLC_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0"
 VLC_REFERER = f"{BASE}/"
+VLC_ORIGIN = f"{BASE}"
 VLC_ICY = "1"
 
 LEAGUE_INFO = {
@@ -131,6 +132,7 @@ def build_m3u(events):
             lines.append(f'#EXTINF:-1 tvg-id="{tvid}" tvg-logo="{logo}" group-title="Pixelsports - {group_display} - {label}",{title}')
             lines.append(f"#EXTVLCOPT:http-user-agent={VLC_USER_AGENT}")
             lines.append(f"#EXTVLCOPT:http-referrer={VLC_REFERER}")
+            lines.append(f"#EXTVLCOPT:http-origin={VLC_ORIGIN}")
             lines.append(f"#EXTVLCOPT:http-icy-metadata={VLC_ICY}")
             lines.append(link)
     return "\n".join(lines)
