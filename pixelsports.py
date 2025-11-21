@@ -87,6 +87,7 @@ def collect_links_with_labels(event):
         try:
             link = event["channel"][key]
             if link and link.lower() != "null":
+                link = link.replace(":443", "")
                 # Server 1 matches competitor 1, server 2 matches competitor 2
                 if i == 1:
                     label = "Home" if comp1_home else "Away"
